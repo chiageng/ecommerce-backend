@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$p)lzkkz#1mno5z580j(^&ao356b2(mvtbjwl**)qiv(t3*l!1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'proshop-demo33.herokuapp.com']
 
 
 # Application definition
@@ -40,12 +43,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'storages',
 
     'base.apps.BaseConfig',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -139,7 +147,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME':  'proshop',
         'USER': 'chiageng',
-        'PASSWORD': 'Chiageng1898',
+        'PASSWORD': os.environ.get('DB_PASS'),
         'HOST': 'proshop-identifier.c9h8fg8m6lul.ap-southeast-2.rds.amazonaws.com',
         'PORT': '5432'
     }
@@ -184,7 +192,10 @@ STATIC_URL = 'static/'
 MEDIA_URL = 'images/'
 STATICFILES_DIR = [
     BASE_DIR.joinpath("static"),
+    BASE_DIR.joinpath("frontend/build/static")
 ]
+
+
 
 # STATIC_ROOT = BASE_DIR.joinpath('staticfiles')
 
@@ -197,3 +208,13 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# AWS_QUERYSTRING_AUTH = False
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+AWS_STORAGE_BUCKET_NAME = "proshop-bucket-demo-ecommerce"
+
+
